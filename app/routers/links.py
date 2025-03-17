@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from ..auth import get_current_user
 from ..database import SessionLocal, get_db
 from ..models import Link, User

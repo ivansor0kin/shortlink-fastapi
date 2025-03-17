@@ -1,34 +1,37 @@
 # Веб-сервис для сокращения ссылок
 
-FastAPI-приложение для создания, управления и отслеживания коротких ссылок с кэшированием через Redis.
+FastAPI-приложение для создания, управления и отслеживания коротких ссылок с регистрацией пользователей, кэшированием через Redis и хранением данных в PostgreSQL. Развертывание осуществляется исключительно на Render.com.
 
 ## API
 
-- **POST /links/shorten**: Создает короткую ссылку.
-  - Параметры: `original_url` (обязательный), `custom_alias` (опциональный), `expires_at` (опциональный).
-- **GET /links/{short_code}**: Возвращает информацию о ссылке.
-- **DELETE /links/{short_code}**: Удаляет ссылку.
-- **PUT /links/{short_code}**: Обновляет URL.
-- **GET /links/{short_code}/stats**: Статистика по ссылке.
-- **GET /links/search?original_url={url}**: Поиск по оригинальному URL.
-- **GET /links/expired**: Список истекших ссылок.
+### Аутентификация
+- **POST /register**: Регистрация нового пользователя.
+  - Тело запроса: `{"username": "string", "password": "string"}`
+  - Ответ: `{"access_token": "string", "token_type": "bearer"}`
+
+- **POST /token**: Получение токена для авторизации.
+  - Тело запроса: `{"username": "string", "password": "string"}`
+  - Ответ: `{"access_token": "string", "token_type": "bearer"}`
+
+### Ссылки
+- **POST /links/shorten**: Создает короткую ссылку (требуется авторизация).
+  - Тело запроса: `{"original_url": "string", "custom_alias": "string", "expires_at": "datetime"}`
+  - Ответ: `{"id": int, "original_url": "string", "short_code": "string", "created_at": "datetime", "expires_at": "datetime", "user_id": int}`
+
+- **GET /links/{short_code}**: Перенаправляет на оригинальный URL.
+  - Ответ: `{"original_url": "string"}`
+
+- **DELETE /links/{short_code}**: Удаляет ссылку (требуется авторизация).
+  - Ответ: `{"message": "Link deleted"}`
+
+- **PUT /links/{short_code}**: Обновляет ссылку (требуется авторизация).
+  - Тело запроса: `{"original_url": "string"}`
+  - Ответ: `{"id": int, "original_url": "string", "short_code": "string", "created_at": "datetime", "expires_at": "datetime", "user_id": int}`
+
+- **GET /links/{short_code}/stats**: Получает статистику по ссылке.
+  - Ответ: `{"original_url": "string", "created_at": "string", "clicks": int, "last_used": "string"}`
+
+- **GET /links/search?original_url={url}**: Ищет короткую ссылку по оригинальному URL.
+  - Ответ: `{"short_code": "string"}`
 
 ## Примеры запросов
-
-1. Создание ссылки:
-```bash
-curl -X POST "http://localhost:8000/links/shorten" -d '{"original_url": "https://example.com"}' -H "Content-Type: application/json"
-```
-2. Получение информации:
-```bash
-curl "http://localhost:8000/links/abc123"
-```
-
-## Локальный запуск
-
-1. Установите Docker и Docker Compose.
-2. Выполните:
-```bash
-docker-compose up --build
-```
-3. API будет доступно на http://localhost:8000.
