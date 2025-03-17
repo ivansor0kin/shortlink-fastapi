@@ -4,8 +4,8 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
-from .database import SessionLocal
-from .models import User
+from app.database import SessionLocal
+from app.models import User
 import os
 
 SECRET_KEY = os.getenv("SECRET_KEY")

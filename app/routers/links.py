@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
-from ..auth import get_current_user
-from ..database import SessionLocal, get_db
-from ..models import Link, User
-from ..schemas import LinkCreate, Link as LinkSchema
-from ..services import create_link, get_link, delete_link, update_link, get_stats, search_by_url
-from ..cache import cache_get, cache_set, cache_delete
+from app.auth import get_current_user
+from app.database import SessionLocal, get_db
+from app.models import Link, User
+from app.schemas import LinkCreate, Link as LinkSchema
+from app.services import create_link, get_link, delete_link, update_link, get_stats, search_by_url
+from app.cache import cache_get, cache_set, cache_delete
 from datetime import datetime
 
 router = APIRouter()

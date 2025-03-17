@@ -1,6 +1,6 @@
-from .models import Link
-from .utils import generate_short_code
-from .config import DEFAULT_LINK_EXPIRY_DAYS
+from app.models import Link
+from app.utils import generate_short_code
+from app.config import DEFAULT_LINK_EXPIRY_DAYS
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 
