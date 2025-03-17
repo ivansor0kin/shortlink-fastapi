@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from app.routers import links, users
-from app.database import Base, engine
+from routers import links, users
+from database import Base, engine
 
 app = FastAPI()
 
