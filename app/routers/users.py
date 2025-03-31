@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.auth import create_access_token, get_password_hash, verify_password #убрать из импорта app
-from app.database import SessionLocal, get_db #убрать из импорта app
+from app.database import get_db #убрать из импорта app
 from app.models import User #убрать из импорта app
 from app.schemas import UserCreate, Token #убрать из импорта app
 

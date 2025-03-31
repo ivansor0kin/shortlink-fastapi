@@ -1,6 +1,5 @@
 import os
-# Устанавливаем SECRET_KEY до любых импортов
-os.environ["SECRET_KEY"] = "0cc91c437e6f60fff6e68f2e9ff9575bb70ed1a524c00c1048643005a37f30d1"
+os.environ["SECRET_KEY"] = "SECRET_KEY"
 
 import pytest
 from fastapi.testclient import TestClient
@@ -9,10 +8,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from app.main import app
 from app.database import Base, get_db
-from app.models import User, Link
+from app.models import User
 from app.auth import get_password_hash
 
-# Тестовая база данных (in-memory SQLite для скорости)
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
 engine = create_engine(
@@ -23,15 +21,13 @@ engine = create_engine(
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Переопределяем глобальную сессию в auth.py на тестовую
 from app import auth
 auth.SessionLocal = TestingSessionLocal
 
 @pytest.fixture(scope="function")
 def db_session():
-    """Создаёт временную БД для каждого теста."""
-    Base.metadata.drop_all(bind=engine)  # Удаляем таблицы перед созданием
-    Base.metadata.create_all(bind=engine)  # Создаём таблицы перед тестом
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
     db = TestingSessionLocal()
     try:
         yield db
@@ -41,12 +37,11 @@ def db_session():
 
 @pytest.fixture(scope="function")
 def client(db_session, mocker):
-    """Фикстура для TestClient с подменой зависимостей."""
     def override_get_db():
-        yield db_session  # <-- изменено: больше не закрываем сессию здесь
+        yield db_session  #изменено: больше не закрываем сессию здесь
 
     app.dependency_overrides[get_db] = override_get_db
-    # Мокаем Redis
+    #Мокаем Redis
     mocker.patch('app.cache.redis_client.get', return_value=None)
     mocker.patch('app.cache.redis_client.setex', return_value=None)
     mocker.patch('app.cache.redis_client.delete', return_value=None)
@@ -57,7 +52,6 @@ def client(db_session, mocker):
 
 @pytest.fixture
 def test_user(db_session):
-    """Создаёт тестового пользователя."""
     hashed_password = get_password_hash("test123")
     user = User(username="testuser", hashed_password=hashed_password)
     db_session.add(user)

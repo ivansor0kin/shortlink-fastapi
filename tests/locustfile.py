@@ -6,7 +6,6 @@ class ShortlinkUser(HttpUser):
     host = "https://shortlink-fastapi.onrender.com"
 
     def on_start(self):
-        # Регистрация и логин
         self.client.post("/register", json={"username": f"user{random.randint(1, 1000)}", "password": "test123"})
         response = self.client.post("/token", data={"username": "testuser", "password": "test123"})
         self.token = response.json()["access_token"]

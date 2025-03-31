@@ -6,7 +6,7 @@ import pytest
 
 def normalize_url(url: str) -> str:
     parsed = urlparse(url)
-    scheme = "https"  # принудительно используем https
+    scheme = "https"
     path = parsed.path.rstrip('/')
     return urlunparse((scheme, parsed.netloc, path, '', '', ''))
 
