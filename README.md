@@ -190,7 +190,7 @@ coverage html
 2. Чтобы запустить тесты 3, выполните:
 
 ```bash
-     locust -f tests/locustfile.py
+locust -f tests/locustfile.py
 ```
 
 Откройте http://localhost:8089 в браузере, настройте количество пользователей (например, 100) и интенсивность (10 запросов/с).
