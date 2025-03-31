@@ -1,5 +1,5 @@
 import redis
-from config import REDIS_URL, CACHE_EXPIRE_SECONDS
+from app.config import REDIS_URL, CACHE_EXPIRE_SECONDS # убрать из импорта app
 
 redis_client = redis.from_url(REDIS_URL)
 

@@ -4,11 +4,11 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
-from database import SessionLocal
-from models import User
+from app.database import SessionLocal #убрать из импорта app
+from app.models import User #убрать из импорта app
 import os
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", "0cc91c437e6f60fff6e68f2e9ff9575bb70ed1a524c00c1048643005a37f30d1")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
