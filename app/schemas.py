@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, AnyHttpUrl
 from datetime import datetime
 from typing import Optional
 
@@ -18,7 +18,7 @@ class Token(BaseModel):
     token_type: str
 
 class LinkCreate(BaseModel):
-    original_url: str
+    original_url: AnyHttpUrl
     custom_alias: Optional[str] = None
     expires_at: Optional[datetime] = None
 

@@ -1,7 +1,12 @@
+import os
+# Устанавливаем SECRET_KEY до любых импортов
+os.environ["SECRET_KEY"] = "0cc91c437e6f60fff6e68f2e9ff9575bb70ed1a524c00c1048643005a37f30d1"
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 from app.main import app
 from app.database import Base, get_db
 from app.models import User, Link
@@ -9,8 +14,18 @@ from app.auth import get_password_hash
 
 # Тестовая база данных (in-memory SQLite для скорости)
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool
+)
+
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Переопределяем глобальную сессию в auth.py на тестовую
+from app import auth
+auth.SessionLocal = TestingSessionLocal
 
 @pytest.fixture(scope="function")
 def db_session():
@@ -27,12 +42,8 @@ def db_session():
 @pytest.fixture(scope="function")
 def client(db_session, mocker):
     """Фикстура для TestClient с подменой зависимостей."""
-
     def override_get_db():
-        try:
-            yield db_session
-        finally:
-            db_session.close()
+        yield db_session  # <-- изменено: больше не закрываем сессию здесь
 
     app.dependency_overrides[get_db] = override_get_db
     # Мокаем Redis

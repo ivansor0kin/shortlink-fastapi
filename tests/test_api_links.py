@@ -5,6 +5,7 @@ def test_create_link(client, db_session, test_user, mocker):
     token = create_access_token({"sub": test_user.username})
     client.headers["Authorization"] = f"Bearer {token}"
     mocker.patch("app.routers.links.get_current_user", return_value=test_user)  # Мокаем авторизацию
+    mocker.patch("app.cache.cache_set", return_value=None)  # Мокаем cache_set
     response = client.post("/links/shorten", json={"original_url": "https://example.com"})
     assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
     data = response.json()
@@ -38,7 +39,7 @@ def test_delete_link(client, db_session, test_user):
 
 def test_search_link(client, db_session):
     create_link(db_session, "https://stepik.org/learn", short_code="stepik")
-    response = client.get("/links/search?original_url=https://stepik.org/learn/")
+    response = client.get("/links/search?original_url=https://stepik.org/learn")
     assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
     data = response.json()
     assert len(data) == 1

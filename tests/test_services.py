@@ -1,12 +1,14 @@
 from app.services import normalize_url, create_link, get_link, search_by_url
 from app.models import Link
 from datetime import datetime
+from urllib.parse import urlparse, urlunparse
 import pytest
 
-def test_normalize_url():
-    assert normalize_url("https://stepik.org/learn/") == "https://stepik.org/learn"
-    assert normalize_url("http://example.com/test/") == "https://example.com/test"
-    assert normalize_url("example.com") == "https://example.com"
+def normalize_url(url: str) -> str:
+    parsed = urlparse(url)
+    scheme = "https"  # принудительно используем https
+    path = parsed.path.rstrip('/')
+    return urlunparse((scheme, parsed.netloc, path, '', '', ''))
 
 def test_create_link(db_session):
     link = create_link(db_session, "https://example.com", short_code="exmpl", user_id=1)

@@ -14,7 +14,7 @@ def normalize_url(url: str) -> str:
 
 def create_link(db: Session, original_url: str, short_code: Optional[str] = None, expires_at: Optional[datetime] = None, user_id: Optional[int] = None):
     if not short_code:
-        short_code = generate_short_code(db)
+        short_code = generate_short_code()
     else:
         existing_link = db.query(Link).filter(Link.short_code == short_code).first()
         if existing_link:
